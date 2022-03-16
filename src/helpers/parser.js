@@ -1,15 +1,12 @@
-/* 
-  Replace all occurrences of ' : ' with ''
-  Replace all occurrences of '(' and ')' with ' '
-*/
+
 const formatSpec = (str) => {
+  if (typeof str !== 'string') throw new Error('"str" must be a string');
   return str
     .replaceAll(/[(|)]/g, ' ')
     .replaceAll(/[' ']:[' ']/g, '');
 };
 
 
-// Split string and return object of properties
 const getProperties = (str) => {
   const [feeId, currency, locale, entity, entityProperty, _, type, value] = str.split(' ');
   return { 

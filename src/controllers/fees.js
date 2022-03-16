@@ -1,18 +1,10 @@
-const joi = require('joi');
+const { add, subtract, toUnit } = require('dinero.js');
 const Fee = require('../models/fee');
 const ApiError = require('../api-error');
 const parseSpec = require('../helpers/parser');
 const { locales } = require('../helpers/constants');
 const { calculateCharge, normalizeValue } = require('../helpers/charges');
-const { add, subtract, toUnit } = require('dinero.js');
-
-const validateFeeRequestBody = (obj) => {
-  const schema = joi.object().keys({
-    FeeConfigurationSpec: joi.string().required()
-  }).required();
-
-  return schema.validate(obj);
-};
+const { validateComputationBody, validateFeeRequestBody } = require('../helpers/validation');
 
 const postFee = async (req, res, next) => {
   try {
@@ -23,8 +15,8 @@ const postFee = async (req, res, next) => {
     const specs = FeeConfigurationSpec.split('\n');
 
     const docs = specs.map(parseSpec);
-    await Fee.insertMany(docs).catch(console.error);
-    res.status(201).json({ status: 'ok' });
+    await Fee.insertMany(docs);
+    res.json({ status: 'ok' });
   } catch (e) {
     next(e);
   }
@@ -32,34 +24,29 @@ const postFee = async (req, res, next) => {
 
 const computeTransactionFee = async (req, res, next) => {
   try {
+    const { error } = validateComputationBody(req.body);
+    if (error) throw new ApiError(error.details[0].message, 400);
+
     const { Amount, Currency, CurrencyCountry, Customer, PaymentEntity } = req.body;
     const { BearsFee } = Customer;
     const { ID, Issuer, Brand, Number: number, SixID, Type, Country } = PaymentEntity;
 
     const locale = CurrencyCountry == Country ? locales.LOCL : locales.INTL;
-
     const configs = await Fee.find({
       currency: Currency,
-      locale: {
-        $in: [locale, '*']
-      },
-      entity: {
-        $in: [Type, '*']
-      },
-      entityProperty: {
-        $in: [ID, Issuer, Brand, number, SixID, '*']
-      }
+      locale: { $in: [locale, '*'] },
+      entity: { $in: [Type, '*'] },
+      entityProperty: { $in: [ID, Issuer, Brand, number, SixID, '*'] }
     });
 
-    if (!configs.length) {
+    if (!configs.length || Currency !== 'NGN') {
       throw new ApiError(
         `No fee configuration for ${Currency} transactions.`,
         400
       );
     }
     
-    const validConfig = configs[0];
-    const { feeId, value, type } = validConfig;
+    const { feeId, value, type } = configs[0];
     const amount = normalizeValue(Amount.toString());
   
     const AppliedFeeValue = calculateCharge({

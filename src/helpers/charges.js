@@ -137,9 +137,14 @@ const calculateFlatPercentageCharge = ({ amount, value }) => {
 }
 
 /**
+ * Accepts feeType value and amount.
+ * Calculates charge using feeType charge and amount
  * 
- * @param {*} param0 
- * @returns 
+ * @param {Object} param 
+ * @param {import('dinero.js').Dinero} param.feeType
+ * @param {String} param.value 
+ * @param {String} param.amount 
+ * @returns
  */
 const calculateCharge = ({ feeType, value, amount }) => {
   if (!feeTypes[feeType]) throw new Error(`"${feeType}" is not a valid fee type.`);
