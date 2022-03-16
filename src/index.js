@@ -1,5 +1,7 @@
 require('dotenv/config');
 const express = require('express');
+const helmet = require('helmet');
+const compression = require('compression');
 const apiRoutes = require('./routes/fees');
 const errorMiddleware = require('./middleware/error');
 const { mongoConnect, createIndexes } = require('./db');
@@ -20,6 +22,10 @@ const startServer = async () => {
    */
   await createIndexes();
 
+  if (process.env.NODE_ENV === 'production') {
+    app.use(helmet());
+    app.use(compression());
+  }
   app.use(express.json());
   app.use('/api', apiRoutes);
   app.use(errorMiddleware);

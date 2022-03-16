@@ -12,13 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "@dinero.js/currencies": "^2.0.0-alpha.8",
+    "compression": "^1.7.4",
     "dinero.js": "^2.0.0-alpha.8",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "helmet": "^5.0.2",
     "joi": "^17.6.0",
     "mongodb": "^4.4.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
+  },
+  "engines": {
+    "node": "16.14.0"
   }
 }
