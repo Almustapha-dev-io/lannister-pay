@@ -13,7 +13,7 @@ const startServer = async () => {
   /**
    * Verify that DB_URL is set in environment
    */
-  if (!process.env.DB_URL) throw new Error('Fata Error: "DB_URL" not set.');
+  if (!process.env.DB_URL) throw new Error('Fatal Error: "DB_URL" not set.');
   await mongoConnect(process.env.DB_URL);
 
   /**

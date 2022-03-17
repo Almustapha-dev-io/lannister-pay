@@ -46,6 +46,11 @@ class Fee {
     return await db.collection('fees').find(query).sort('priority').toArray();
   }
 
+  static async flush() {
+    const db = getDb();
+    return await db.collection('fees').deleteMany({});
+  }
+
   get json() {
     return {
       feeId: this.feeId,

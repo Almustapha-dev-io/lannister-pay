@@ -37,20 +37,13 @@ const computeTransactionFee = async (req, res, next) => {
     });
 
     if (!configs.length || Currency !== 'NGN') {
-      throw new ApiError(
-        `No fee configuration for ${Currency} transactions.`,
-        400
-      );
+      throw new ApiError(`No fee configuration for ${Currency} transactions.`, 400);
     }
     
-    const { feeId, value, type } = configs[0];
+    const { feeId, value, type: feeType } = configs[0];
     const amount = normalizeValue(Amount.toString());
   
-    const AppliedFeeValue = calculateCharge({
-      feeType: type,
-      value,
-      amount
-    });
+    const AppliedFeeValue = calculateCharge({ feeType, value, amount });
 
     const ChargeAmount = BearsFee ? add(amount, AppliedFeeValue) : amount;
     const SettlementAmount = subtract(ChargeAmount, AppliedFeeValue);
@@ -66,7 +59,17 @@ const computeTransactionFee = async (req, res, next) => {
   }
 };
 
+const flush = async (req, res, next) => {
+  try {
+    await Fee.flush();
+    res.json({ status: 'ok' });
+  } catch (e) {
+    next(e);
+  }
+}
+
 module.exports = {
   postFee,
+  flush,
   computeTransactionFee
 };
