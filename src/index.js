@@ -1,5 +1,6 @@
 require('dotenv/config');
 const express = require('express');
+const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const apiRoutes = require('./routes/fees');
@@ -13,8 +14,6 @@ const startServer = async () => {
    * Verify that DB_URL is set in environment
    */
   if (!process.env.DB_URL) throw new Error('Fata Error: "DB_URL" not set.');
-
-  const PORT = process.env.PORT || 3030;
   await mongoConnect(process.env.DB_URL);
 
   /**
@@ -26,11 +25,12 @@ const startServer = async () => {
     app.use(helmet());
     app.use(compression());
   }
+  app.use(cors())
   app.use(express.json());
   app.use('/api', apiRoutes);
   app.use(errorMiddleware);
   
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(5000, () => console.log(`Server running on port 5000`));
 };
 
 startServer();

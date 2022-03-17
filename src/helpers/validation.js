@@ -27,15 +27,15 @@ const validateComputationBody = (obj) => {
       FullName: joi.string(),
       BearsFee: joi.boolean().required()
     }).required(),
-    PaymentEntity: {
-      ID: numberOrString().required(),
+    PaymentEntity: joi.object().keys({
+      ID: numberOrString(),
       Issuer: joi.string(),
       Brand: joi.string(),
       Number: joi.string(),
       SixID: numberOrString(),
       Type: joi.string(),
       Country: joi.string()
-    }
+    })
   }).required();
   return schema.validate(obj);
 };

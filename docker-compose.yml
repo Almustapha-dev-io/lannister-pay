@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  api:
+    image: afrojedi/lannpay:v2
+    ports:
+      - 5000:5000
+    environment:
+      DB_URL: mongodb://db/lannpay
+    depends_on:
+      - db
+      
+  db:
+    image: mongo:4.0.28-xenial
+    ports:
+      - 27018:27017
+    volumes:
+      - lannpay:/data/db
+
+volumes:
+  lannpay: null
