@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   api:
-    image: afrojedi/lannpay:v2
+    image: afrojedi/lannpay:v3
     ports:
       - 5000:5000
     environment:

@@ -4,7 +4,7 @@ const ApiError = require('../api-error');
 const parseSpec = require('../helpers/parser');
 const { locales } = require('../helpers/constants');
 const { calculateCharge, normalizeValue } = require('../helpers/charges');
-const { validateComputationBody, validateFeeRequestBody } = require('../helpers/validation');
+const { validateFeeRequestBody } = require('../helpers/validation');
 
 const postFee = async (req, res, next) => {
   try {
@@ -24,9 +24,6 @@ const postFee = async (req, res, next) => {
 
 const computeTransactionFee = async (req, res, next) => {
   try {
-    const { error } = validateComputationBody(req.body);
-    if (error) throw new ApiError(error.details[0].message, 400);
-
     const { Amount, Currency, CurrencyCountry, Customer, PaymentEntity } = req.body;
     const { BearsFee } = Customer;
     const { ID, Issuer, Brand, Number: number, SixID, Type, Country } = PaymentEntity;
