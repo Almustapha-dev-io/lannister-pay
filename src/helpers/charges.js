@@ -1,5 +1,5 @@
 const { feeTypes } = require('./constants');
-const { dinero, add, multiply, subtract, toUnit } = require('dinero.js');
+const { dinero, add, multiply } = require('dinero.js');
 const { NGN } = require('@dinero.js/currencies');
 
 /**
@@ -35,7 +35,7 @@ const getPercentageScale = (value) => {
 
 /**
  * Convert a number to its equivalent minor value
- * e.g NGN50 == 50000
+ * e.g NGN50 to 5000K
  * 
  * @param {Object} param The object param
  * @param {Number} param.value The number value
@@ -58,7 +58,7 @@ const valueToMinorValue = ({ value, decimalPlaces, exponent }) => {
  * and converts it to a Dinero object
  * 
  * @param {String} value The number in string 
- * @returns 
+ * @returns Dinero<number>
  */
 const normalizeValue = (value) => {
   const decimalPlaces = getDecimalPlaceCount(value);
@@ -71,7 +71,7 @@ const normalizeValue = (value) => {
 };
 
 /**
- * Accepts a number in string format and
+ * Accepts a number percentage in string format and
  * converts it to a Dinero equivalent
  * 
  * @param {String} value 

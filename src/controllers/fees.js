@@ -12,8 +12,7 @@ const postFee = async (req, res, next) => {
     if (error) throw new ApiError(error.details[0].message, 400);
 
     const { FeeConfigurationSpec } = req.body;
-    const specs = FeeConfigurationSpec.split('\n');
-
+    const specs = FeeConfigurationSpec.trim().split('\n');
     const docs = specs.map(parseSpec);
     await Fee.insertMany(docs);
     res.json({ status: 'ok' });
@@ -27,6 +26,8 @@ const computeTransactionFee = async (req, res, next) => {
     const { Amount, Currency, CurrencyCountry, Customer, PaymentEntity } = req.body;
     const { BearsFee } = Customer;
     const { ID, Issuer, Brand, Number: number, SixID, Type, Country } = PaymentEntity;
+
+    if (Amount <= 0) throw new ApiError('Invalid amount', 400);
 
     const locale = CurrencyCountry == Country ? locales.LOCL : locales.INTL;
     const configs = await Fee.find({
